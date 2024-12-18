@@ -1,6 +1,6 @@
 qBittorrent Enhanced Edition
 ------------------------------------------
-[Important Note for user and tracker operators](NOTE.md)
+This program is a modified version of qBittorrentEE, designed to maintain compatibility with private trackers. It features a PeerAgent and PeerID that are consistent with the official qBittorrent version 4.6.7. This ensures seamless integration and functionality with private trackers that require specific client identification.
 ********************************
 # Features:
 1. Auto Ban Xunlei, QQ, Baidu, Xfplay, DLBT and Offline downloader
