@@ -72,7 +72,7 @@ void ProgramUpdater::checkForUpdates() const
     // Don't change this User-Agent. In case our updater goes haywire,
     // the filehost can identify it and contact us.
     Net::DownloadManager::instance()->download(
-            Net::DownloadRequest(RSS_URL).userAgent(QStringLiteral("qBittorrent Enhanced/" QBT_VERSION_2 " ProgramUpdater (git.io/qbit)"))
+            Net::DownloadRequest(RSS_URL).userAgent(QStringLiteral("qBittorrent/" QBT_VERSION_2 " ProgramUpdater (git.io/qbit)"))
             , Preferences::instance()->useProxyForGeneralPurposes(), this, &ProgramUpdater::rssDownloadFinished);
 }
 
