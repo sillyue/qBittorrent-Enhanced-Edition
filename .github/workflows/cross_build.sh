@@ -142,7 +142,7 @@ verlte() {
 
 prepare_cmake() {
   if ! which cmake &>/dev/null; then
-    cmake_latest_ver="$(retry curl -ksSL --compressed https://cmake.org/download/ \| grep "'Latest Release'" \| sed -r "'s/.*Latest Release\s*\((.+)\).*/\1/'" \| head -1)"
+    cmake_latest_ver=$(curl -ksSL --compressed https://cmake.org/download/ | grep "Latest Release" | sed -r 's/.*Latest Release \(([^)]+)\).*/\1/' | head -1)
     cmake_binary_url="https://github.com/Kitware/CMake/releases/download/v${cmake_latest_ver}/cmake-${cmake_latest_ver}-linux-x86_64.tar.gz"
     cmake_sha256_url="https://github.com/Kitware/CMake/releases/download/v${cmake_latest_ver}/cmake-${cmake_latest_ver}-SHA-256.txt"
     if [ x"${USE_CHINA_MIRROR}" = x1 ]; then
@@ -165,7 +165,7 @@ prepare_cmake() {
 
 prepare_ninja() {
   if ! which ninja &>/dev/null; then
-    ninja_ver="$(retry curl -ksSL --compressed https://ninja-build.org/ \| grep "'The last Ninja release is'" \| sed -r "'s@.*<b>(.+)</b>.*@\1@'" \| head -1)"
+    ninja_ver=$(retry curl -ksSL --compressed https://ninja-build.org/ | grep "The last Ninja release is" | sed -r 's@.*<b>(.+)</b>.*@\1@' | head -1)
     ninja_binary_url="https://github.com/ninja-build/ninja/releases/download/${ninja_ver}/ninja-linux.zip"
     if [ x"${USE_CHINA_MIRROR}" = x1 ]; then
       ninja_binary_url="https://ghp.ci/${ninja_binary_url}"
@@ -182,7 +182,7 @@ prepare_ninja() {
 
 prepare_zlib() {
   if [ x"${USE_ZLIB_NG}" = x"1" ]; then
-    zlib_ng_latest_tag="$(retry curl -ksSL --compressed https://api.github.com/repos/zlib-ng/zlib-ng/releases \| jq -r "'.[0].tag_name'")"
+    zlib_ng_latest_tag=$(retry curl -ksSL --compressed https://api.github.com/repos/zlib-ng/zlib-ng/releases | jq -r '.[0].tag_name')
     zlib_ng_latest_url="https://github.com/zlib-ng/zlib-ng/archive/refs/tags/${zlib_ng_latest_tag}.tar.gz"
     echo "zlib-ng version ${zlib_ng_latest_tag}"
     if [ x"${USE_CHINA_MIRROR}" = x1 ]; then
@@ -210,7 +210,7 @@ prepare_zlib() {
     # Fix mingw build sharedlibdir lost issue
     sed -i 's@^sharedlibdir=.*@sharedlibdir=${libdir}@' "${CROSS_PREFIX}/lib/pkgconfig/zlib.pc"
   else
-    zlib_ver="$(retry curl -ksSL --compressed https://zlib.net/ \| grep -i "'<FONT.*FONT>'" \| sed -r "'s/.*zlib\s*([^<]+).*/\1/'" \| head -1)"
+    zlib_ver=$(retry curl -ksSL --compressed https://zlib.net/ | grep -i '<FONT.*FONT>' | sed -r 's/.*zlib\s*([^<]+).*/\1/' | head -1)
     echo "zlib version ${zlib_ver}"
     if [ ! -f "/usr/src/zlib-${zlib_ver}/.unpack_ok" ]; then
       mkdir -p "/usr/src/zlib-${zlib_ver}"
@@ -231,7 +231,7 @@ prepare_zlib() {
 }
 
 prepare_ssl() {
-  openssl_filename="$(retry curl -ksSL --compressed https://openssl-library.org/source/ \| grep -o "'>openssl-3\(\.[0-9]*\)*tar.gz<'" \| grep -o "'[^>]*.tar.gz'" \| sort -nr \| head -1)"
+  openssl_filename=$(retry curl -ksSL --compressed https://openssl-library.org/source/ | grep -o '>openssl-3\(\.[0-9]*\)*tar.gz<' | grep -o '[^>]*.tar.gz' | sort -nr | head -1)
   openssl_ver="$(echo "${openssl_filename}" | sed -r 's/openssl-(.+)\.tar\.gz/\1/')"
   echo "OpenSSL version ${openssl_ver}"
   if [ ! -f "/usr/src/openssl-${openssl_ver}/.unpack_ok" ]; then
@@ -256,7 +256,7 @@ prepare_ssl() {
 }
 
 prepare_boost() {
-  boost_ver="$(retry curl -ksSL --compressed https://www.boost.org/users/download/ \| grep "'>Version\s*'" \| sed -r "'s/.*Version\s*([^<]+).*/\1/'" \| head -1)"
+  boost_ver=$(retry curl -s https://www.boost.org/users/download/ | grep -oP '(?<=Version )[\w\.]+' | head -n 1)
   echo "Boost version ${boost_ver}"
   if [ ! -f "/usr/src/boost-${boost_ver}/.unpack_ok" ]; then
     boost_latest_url="https://sourceforge.net/projects/boost/files/boost/${boost_ver}/boost_${boost_ver//./_}.tar.bz2/download"
@@ -278,9 +278,9 @@ prepare_boost() {
 }
 
 prepare_qt() {
-  qt_major_ver="$(retry curl -ksSL --compressed https://download.qt.io/official_releases/qt/ \| sed -nr "'s@.*href=\"([0-9]+(\.[0-9]+)*)/\".*@\1@p'" \| grep \"^${QT_VER_PREFIX}\" \| head -1)"
-  qt_ver="$(retry curl -ksSL --compressed https://download.qt.io/official_releases/qt/${qt_major_ver}/ \| sed -nr "'s@.*href=\"([0-9]+(\.[0-9]+)*)/\".*@\1@p'" \| grep \"^${QT_VER_PREFIX}\" \| head -1)"
-  echo "Using qt version: ${qt_ver}"
+qt_major_ver=$(retry curl -ksSL --compressed https://download.qt.io/official_releases/qt/ | sed -nr 's@.*href="([0-9]+(\.[0-9]+)*)/".*@\1@p' | grep "^${QT_VER_PREFIX}" | head -1)
+qt_ver=$(retry curl -ksSL --compressed https://download.qt.io/official_releases/qt/${qt_major_ver}/ | sed -nr 's@.*href="([0-9]+(\.[0-9]+)*)/".*@\1@p' | grep "^${QT_VER_PREFIX}" | head -1)
+echo "Using qt version: ${qt_ver}"
   mkdir -p "/usr/src/qtbase-${qt_ver}" "/usr/src/qttools-${qt_ver}"
   if [ ! -f "/usr/src/qt-host/${qt_ver}/gcc_64/bin/qt.conf" ]; then
     pipx install aqtinstall
