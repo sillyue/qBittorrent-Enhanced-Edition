@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  actions: write
+  contents: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -17,7 +17,6 @@ jobs:
   ci:
     name: Build
     runs-on: windows-latest
-    permissions: write-all
 
     strategy:
       fail-fast: false
