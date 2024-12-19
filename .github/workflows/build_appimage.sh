@@ -12,7 +12,7 @@ set -o pipefail
 
 # match qt version prefix. E.g 5 --> 5.15.2, 5.12 --> 5.12.10
 export QT_VER_PREFIX="6"
-export LIBTORRENT_BRANCH="RC_1_2"
+export LIBTORRENT_BRANCH="RC_2_0"
 export LC_ALL="C.UTF-8"
 export DEBIAN_FRONTEND=noninteractive
 export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
