@@ -256,7 +256,9 @@ prepare_ssl() {
 }
 
 prepare_boost() {
-  boost_ver=$(retry curl -s https://www.boost.org/users/download/ | grep -oP '(?<=Version )[\w\.]+' | head -n 1)
+  #Don't use Boost 1.87.0 (Boost.Asio removals)
+  #boost_ver=$(retry curl -s https://www.boost.org/users/download/ | grep -oP '(?<=Version )[\w\.]+' | head -n 1)
+  boost_ver="1.86.0"
   echo "Boost version ${boost_ver}"
   if [ ! -f "/usr/src/boost-${boost_ver}/.unpack_ok" ]; then
     boost_latest_url="https://sourceforge.net/projects/boost/files/boost/${boost_ver}/boost_${boost_ver//./_}.tar.bz2/download"
