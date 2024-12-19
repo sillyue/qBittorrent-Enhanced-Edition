@@ -142,7 +142,7 @@ verlte() {
 
 prepare_cmake() {
   if ! which cmake &>/dev/null; then
-    cmake_latest_ver=$(curl -ksSL --compressed https://cmake.org/download/ | grep "Latest Release" | sed -r 's/.*Latest Release \(([^)]+)\).*/\1/' | head -1)
+    cmake_latest_ver=$(retry curl -ksSL --compressed https://cmake.org/download/ | grep "Latest Release" | sed -r 's/.*Latest Release \(([^)]+)\).*/\1/' | head -1)
     cmake_binary_url="https://github.com/Kitware/CMake/releases/download/v${cmake_latest_ver}/cmake-${cmake_latest_ver}-linux-x86_64.tar.gz"
     cmake_sha256_url="https://github.com/Kitware/CMake/releases/download/v${cmake_latest_ver}/cmake-${cmake_latest_ver}-SHA-256.txt"
     if [ x"${USE_CHINA_MIRROR}" = x1 ]; then
