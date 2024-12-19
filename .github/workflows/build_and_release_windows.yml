@@ -1,4 +1,4 @@
-name: Build & Release Windows Installer
+name: Build and Release [Windows]
 
 on:
   release:
@@ -106,7 +106,7 @@ jobs:
       - name: Install libtorrent
         run: |
           git clone `
-            --branch v${{ matrix.libt_version }} `
+            --branch ${{ matrix.libt_version }} `
             --depth 1 `
             --recurse-submodules `
             https://github.com/arvidn/libtorrent.git `
