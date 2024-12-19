@@ -137,7 +137,7 @@ EOF
 prepare_buildenv() {
   # install cmake and ninja-build
   if ! which cmake &>/dev/null; then
-    cmake_latest_ver="$(retry curl -ksSL --compressed https://cmake.org/download/ \| grep "'Latest Release'" \| sed -r "'s/.*Latest Release\s*\((.+)\).*/\1/'" \| head -1)"
+    cmake_latest_ver=$(retry curl -ksSL --compressed https://cmake.org/download/ | grep "Latest Release" | sed -r 's/.*Latest Release \(([^)]+)\).*/\1/' | head -1)
     cmake_binary_url="https://github.com/Kitware/CMake/releases/download/v${cmake_latest_ver}/cmake-${cmake_latest_ver}-linux-x86_64.tar.gz"
     cmake_sha256_url="https://github.com/Kitware/CMake/releases/download/v${cmake_latest_ver}/cmake-${cmake_latest_ver}-SHA-256.txt"
     if [ x"${USE_CHINA_MIRROR}" = x1 ]; then
@@ -158,7 +158,7 @@ prepare_buildenv() {
   fi
   cmake --version
   if ! which ninja &>/dev/null; then
-    ninja_ver="$(retry curl -ksSL --compressed https://ninja-build.org/ \| grep "'The last Ninja release is'" \| sed -r "'s@.*<b>(.+)</b>.*@\1@'" \| head -1)"
+    ninja_ver=$(retry curl -ksSL --compressed https://ninja-build.org/ | grep "The last Ninja release is" | sed -r 's@.*<b>(.+)</b>.*@\1@' | head -1)
     ninja_binary_url="https://github.com/ninja-build/ninja/releases/download/${ninja_ver}/ninja-linux.zip"
     if [ x"${USE_CHINA_MIRROR}" = x1 ]; then
       ninja_binary_url="https://ghp.ci/${ninja_binary_url}"
@@ -174,7 +174,7 @@ prepare_buildenv() {
 }
 
 prepare_ssl() {
-  openssl_filename="$(retry curl -ksSL --compressed https://www.openssl.org/source/ \| grep -o "'>openssl-3\(\.[0-9]*\)*tar.gz<'" \| grep -o "'[^>]*.tar.gz'" \| head -1)"
+  openssl_filename=$(retry curl -ksSL --compressed https://openssl-library.org/source/ | grep -o '>openssl-3\(\.[0-9]*\)*tar.gz<' | grep -o '[^>]*.tar.gz' | sort -nr | head -1)
   openssl_ver="$(echo "${openssl_filename}" | sed -r 's/openssl-(.+)\.tar\.gz/\1/')"
   echo "openssl version: ${openssl_ver}"
   openssl_latest_url="https://github.com/openssl/openssl/archive/refs/tags/${openssl_filename}"
@@ -195,8 +195,8 @@ prepare_ssl() {
 
 prepare_qt() {
   # install qt
-  qt_major_ver="$(retry curl -ksSL --compressed https://download.qt.io/official_releases/qt/ \| sed -nr "'s@.*href=\"([0-9]+(\.[0-9]+)*)/\".*@\1@p'" \| grep \"^${QT_VER_PREFIX}\" \| head -1)"
-  qt_ver="$(retry curl -ksSL --compressed https://download.qt.io/official_releases/qt/${qt_major_ver}/ \| sed -nr "'s@.*href=\"([0-9]+(\.[0-9]+)*)/\".*@\1@p'" \| grep \"^${QT_VER_PREFIX}\" \| head -1)"
+  qt_major_ver=$(retry curl -ksSL --compressed https://download.qt.io/official_releases/qt/ | sed -nr 's@.*href="([0-9]+(\.[0-9]+)*)/".*@\1@p' | grep "^${QT_VER_PREFIX}" | head -1)
+  qt_ver=$(retry curl -ksSL --compressed https://download.qt.io/official_releases/qt/${qt_major_ver}/ | sed -nr 's@.*href="([0-9]+(\.[0-9]+)*)/".*@\1@p' | grep "^${QT_VER_PREFIX}" | head -1)
   echo "Using qt version: ${qt_ver}"
   mkdir -p "/usr/src/qtbase-${qt_ver}" \
     "/usr/src/qttools-${qt_ver}" \
@@ -270,7 +270,7 @@ prepare_qt() {
 
 preapare_libboost() {
   # build latest boost
-  boost_ver="$(retry curl -ksSfL --compressed https://www.boost.org/users/download/ \| grep "'>Version\s*'" \| sed -r "'s/.*Version\s*([^<]+).*/\1/'" \| head -1)"
+  boost_ver=$(retry curl -s https://www.boost.org/users/download/ | grep -oP '(?<=Version )[\w\.]+' | head -n 1)
   echo "boost version ${boost_ver}"
   mkdir -p "/usr/src/boost-${boost_ver}"
   if [ ! -f "/usr/src/boost-${boost_ver}/.unpack_ok" ]; then
