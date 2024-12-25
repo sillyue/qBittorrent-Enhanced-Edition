@@ -244,7 +244,7 @@ prepare_ssl() {
     touch "/usr/src/openssl-${openssl_ver}/.unpack_ok"
   fi
   cd "/usr/src/openssl-${openssl_ver}/"
-  ./Configure -static --openssldir=/etc/ssl --cross-compile-prefix="${CROSS_HOST}-" --prefix="${CROSS_PREFIX}" "${OPENSSL_COMPILER}"
+  ./Configure -static no-tests --openssldir=/etc/ssl --cross-compile-prefix="${CROSS_HOST}-" --prefix="${CROSS_PREFIX}" "${OPENSSL_COMPILER}"
   make -j$(nproc)
   make install_sw
   if [ -f "${CROSS_PREFIX}/lib64/libssl.a" ]; then

@@ -187,7 +187,7 @@ prepare_ssl() {
     touch "/usr/src/openssl-${openssl_ver}/.unpack_ok"
   fi
   cd "/usr/src/openssl-${openssl_ver}"
-  ./Configure --openssldir=/etc/ssl
+  ./Configure no-tests --openssldir=/etc/ssl
   make -j$(nproc)
   make install_sw
   ldconfig
